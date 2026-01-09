@@ -34,12 +34,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenSettings 
     <aside className="hidden md:flex flex-col w-72 h-screen bg-white border-r border-stone-200 shadow-[4px_0_24px_rgba(0,0,0,0.02)] sticky top-0 z-50">
       <div className="p-8 pb-12">
         <h1 
-          className="text-3xl font-bold font-serif cursor-pointer text-stone-900 tracking-tighter"
+          className="text-3xl font-bold font-serif cursor-pointer text-stone-900 tracking-tighter flex items-center gap-2"
           onClick={() => setView(AppView.HOME)}
         >
-          Sentient<span className="text-rose-500">.</span>
+          <span>🌸</span>
+          <span>Sentient<span className="text-rose-500">.</span></span>
         </h1>
-        <p className="text-xs text-stone-400 mt-1 tracking-widest uppercase">AI Creative Studio</p>
+        <p className="text-xs text-stone-400 mt-1 tracking-widest uppercase pl-9">AI Creative Studio</p>
       </div>
 
       <nav className="flex-1 flex flex-col gap-2">
@@ -60,6 +61,12 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenSettings 
           active={currentView === AppView.RESTORE} 
           onClick={() => setView(AppView.RESTORE)}
           icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+        />
+        <NavItem 
+          label="결과물 보관" 
+          active={currentView === AppView.ARCHIVE} 
+          onClick={() => setView(AppView.ARCHIVE)}
+          icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>}
         />
         {/* Settings Button */}
         <NavItem 

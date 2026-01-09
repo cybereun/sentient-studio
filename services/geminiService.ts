@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Modality } from "@google/genai";
+import { GoogleGenAI, Modality, HarmCategory, HarmBlockThreshold } from "@google/genai";
 
 // Simple obfuscation/encryption for local storage
 const STORAGE_KEY = 'SENTIENT_AI_KEY';
@@ -194,6 +194,12 @@ You must follow the user's request precisely. The user's request is: "${translat
             contents: { parts },
             config: {
                 responseModalities: [Modality.IMAGE, Modality.TEXT],
+                safetySettings: [
+                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                ],
             },
         });
 
@@ -246,6 +252,12 @@ You are an expert photo restoration AI. Your task is to restore the provided ima
             },
             config: {
                 responseModalities: [Modality.IMAGE, Modality.TEXT],
+                safetySettings: [
+                    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+                ],
             },
         });
 
@@ -259,5 +271,33 @@ You are an expert photo restoration AI. Your task is to restore the provided ima
         console.error("이미지 복원 중 오류 발생:", error);
         if (error instanceof Error && error.message.includes("API Key")) throw error;
         throw new Error("이미지 복원에 실패했습니다. 입력 이미지나 프롬프트를 확인하시거나 잠시 후 다시 시도해주세요.");
+    }
+};
+
+// New function to analyze the generated image and return a descriptive prompt
+export const analyzeImage = async (imageUrl: string): Promise<string> => {
+    try {
+        const ai = getAI();
+        // Parse data URI: data:image/png;base64,.....
+        const matches = imageUrl.match(/^data:(.+);base64,(.+)$/);
+        if (!matches) return "";
+
+        const mimeType = matches[1];
+        const data = matches[2];
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: {
+                parts: [
+                    { inlineData: { data, mimeType } },
+                    { text: "이 이미지를 자세히 분석하여, 이 이미지를 생성하기 위해 사용되었을 법한 구체적인 프롬프트를 작성해주세요. 피사체의 외관, 행동, 위치, 배경, 조명, 스타일 등을 상세히 묘사해야 합니다. 결과는 한국어로 작성해 주세요." }
+                ]
+            }
+        });
+
+        return response.text?.trim() || "";
+    } catch (error) {
+        console.error("Image analysis failed:", error);
+        return "";
     }
 };

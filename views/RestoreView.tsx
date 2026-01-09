@@ -44,6 +44,19 @@ const RestoreView: React.FC<RestoreViewProps> = ({ addToHistory }) => {
     useEffect(() => {
         setPrompt(generateOptimizedPrompt());
     }, [options, generateOptimizedPrompt]);
+
+    const handleReset = () => {
+        if (window.confirm("모든 작업 내용을 초기화하시겠습니까?")) {
+            setImage(null);
+            setOptions({
+                restore: true,
+                colorize: true,
+                upscale: '2x',
+            });
+            setResult(null);
+            setError(null);
+        }
+    };
     
     const handleSubmit = async () => {
         if (!image) {
@@ -74,9 +87,22 @@ const RestoreView: React.FC<RestoreViewProps> = ({ addToHistory }) => {
     
     return (
         <div className="w-full">
-            <header className="mb-12">
-                <h2 className="text-4xl md:text-5xl font-black text-stone-900 font-serif mb-4">Restore</h2>
-                <p className="text-stone-500 text-lg font-light max-w-xl">오래된 사진에 새로운 생명과 색채를 불어넣으세요.</p>
+            <header className="mb-12 flex justify-between items-end">
+                <div>
+                    <h2 className="text-4xl md:text-5xl font-black text-stone-900 font-serif mb-4">Restore</h2>
+                    <p className="text-stone-500 text-lg font-light max-w-xl">오래된 사진에 새로운 생명과 색채를 불어넣으세요.</p>
+                </div>
+                 {(image || result) && (
+                    <button 
+                        onClick={handleReset}
+                        className="text-sm font-medium text-stone-400 hover:text-rose-500 transition-colors flex items-center gap-1 mb-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        초기화
+                    </button>
+                )}
             </header>
 
             <div className="flex flex-col xl:flex-row gap-8 items-start">
@@ -86,6 +112,12 @@ const RestoreView: React.FC<RestoreViewProps> = ({ addToHistory }) => {
                         <section>
                             <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-4">Original Photo</h3>
                             <ImageUploader id="restore-image" title="사진 업로드" description="복원할 이미지를 선택하세요" onImageSelect={setImage} />
+                            {image && (
+                                <div className="mt-2 text-xs text-stone-500 flex items-center gap-1">
+                                    <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                    이미지 로드됨: {image.file.name}
+                                </div>
+                            )}
                         </section>
                         
                         {/* Restoration Options */}

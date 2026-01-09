@@ -1,7 +1,9 @@
+
 export enum AppView {
   HOME = 'HOME',
   COMPOSE = 'COMPOSE',
   RESTORE = 'RESTORE',
+  ARCHIVE = 'ARCHIVE',
 }
 
 export enum OperationType {
