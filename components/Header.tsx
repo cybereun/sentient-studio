@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AppView } from '../types';
 
@@ -7,21 +8,27 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ setView }) => {
   return (
-    <header className="w-full bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-stone-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="md:hidden w-full bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-stone-100">
+      <div className="px-4">
         <div className="flex justify-between items-center h-16">
           <div 
-            className="text-2xl font-bold text-stone-800 cursor-pointer tracking-wider"
+            className="text-xl font-bold font-serif text-stone-900 cursor-pointer tracking-tighter"
             onClick={() => setView(AppView.HOME)}
           >
-            감성 스튜디오 <span className="text-rose-500">AI</span>
+            Sentient<span className="text-rose-500">.</span>
           </div>
-          <nav>
+          <nav className="flex gap-4">
             <button
-              onClick={() => setView(AppView.HOME)}
-              className="text-stone-600 hover:text-rose-500 transition-colors duration-300 font-medium"
+              onClick={() => setView(AppView.COMPOSE)}
+              className="text-stone-600 hover:text-rose-500 transition-colors text-sm font-medium"
             >
-              홈
+              합성
+            </button>
+             <button
+              onClick={() => setView(AppView.RESTORE)}
+              className="text-stone-600 hover:text-rose-500 transition-colors text-sm font-medium"
+            >
+              복원
             </button>
           </nav>
         </div>

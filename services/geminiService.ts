@@ -1,10 +1,73 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY 환경 변수가 설정되지 않았습니다.");
-}
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Simple obfuscation/encryption for local storage
+const STORAGE_KEY = 'SENTIENT_AI_KEY';
+
+export const saveApiKey = (apiKey: string) => {
+    // Simple Base64 encoding to prevent plain text storage
+    // In a real production app, consider more robust encryption if needed
+    const encrypted = btoa(apiKey);
+    localStorage.setItem(STORAGE_KEY, encrypted);
+};
+
+export const getApiKey = (): string | null => {
+    const encrypted = localStorage.getItem(STORAGE_KEY);
+    if (encrypted) {
+        try {
+            return atob(encrypted);
+        } catch (e) {
+            return null;
+        }
+    }
+    
+    // PRODUCTION FIX: Safe check for environment variables
+    // Browsers crash if you access 'process' directly without a check.
+    try {
+        // 1. Check Vite env vars (standard for Vite apps)
+        // @ts-ignore
+        if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+             // @ts-ignore
+            return import.meta.env.VITE_API_KEY;
+        }
+
+        // 2. Check Process env vars (safely for Node/Polyfilled envs)
+        if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+            return process.env.API_KEY;
+        }
+    } catch (e) {
+        // Ignore errors if env vars are inaccessible
+    }
+
+    return null;
+};
+
+export const hasApiKey = (): boolean => {
+    return !!getApiKey();
+};
+
+const getAI = () => {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        throw new Error("API Key가 설정되지 않았습니다. 왼쪽 메뉴의 설정 버튼을 눌러 API Key를 등록해주세요.");
+    }
+    return new GoogleGenAI({ apiKey });
+};
+
+export const testConnection = async (apiKey: string): Promise<boolean> => {
+    try {
+        const tempAI = new GoogleGenAI({ apiKey });
+        // Perform a lightweight verification call
+        await tempAI.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: 'test',
+        });
+        return true;
+    } catch (error) {
+        console.error("Connection test failed:", error);
+        return false;
+    }
+};
 
 const fileToBase64 = (file: File): Promise<{mimeType: string, data: string}> => {
   return new Promise((resolve, reject) => {
@@ -37,6 +100,7 @@ const extractImageFromResult = (response: any): string | null => {
 const translateToEnglish = async (text: string): Promise<string> => {
     if (!text) return "";
     try {
+        const ai = getAI();
         const response = await ai.models.generateContent({
             model: 'gemini-3-flash-preview',
             contents: `Translate the following Korean text to English. Return only the translated English text, without any additional explanations or introductory phrases.\n\nKorean text: "${text}"`,
@@ -50,6 +114,7 @@ const translateToEnglish = async (text: string): Promise<string> => {
 
 export const generateCompositionPrompt = async (baseImageFile: File, objectImageFiles: File[]): Promise<string> => {
     try {
+        const ai = getAI();
         const [baseImageData, ...objectImageDatas] = await Promise.all([
             fileToBase64(baseImageFile),
             ...objectImageFiles.map(file => fileToBase64(file)),
@@ -85,13 +150,14 @@ Example Output: "사진 속 인물이 첫 번째 사물인 선글라스는 착�
 
     } catch (error) {
         console.error("프롬프트 생성 중 오류 발생:", error);
-        throw new Error("AI 프롬프트 제안을 생성하는 데 실패했습니다. 잠시 후 다시 시도해주세요.");
+        throw new Error("AI 프롬프트 제안을 생성하는 데 실패했습니다. API 키를 확인하거나 잠시 후 다시 시도해주세요.");
     }
 }
 
 
 export const composeImages = async (baseImageFile: File, objectImageFiles: File[], prompt: string): Promise<string> => {
     try {
+        const ai = getAI();
         const [baseImageData, ...objectImageDatas] = await Promise.all([
             fileToBase64(baseImageFile),
             ...objectImageFiles.map(file => fileToBase64(file)),
@@ -117,13 +183,9 @@ You must follow the user's request precisely. The user's request is: "${translat
 5.  **IMAGE OUTPUT ONLY:** Your only response is the final, high-resolution edited image. Do not output any text.
 `;
 
-        // The new structure: ALL images first, then the text prompt.
-        // This is a more robust method for multi-image prompts with this model.
         const parts: any[] = [
-            // 1. Provide all images.
             { inlineData: { data: baseImageData.data, mimeType: baseImageData.mimeType } },
             ...objectImageDatas.map(data => ({ inlineData: { data: data.data, mimeType: data.mimeType } })),
-            // 2. Then provide the single, consolidated text prompt.
             { text: finalEnglishPrompt.trim() },
         ];
 
@@ -144,6 +206,7 @@ You must follow the user's request precisely. The user's request is: "${translat
     } catch (error) {
         console.error("이미지 합성 중 오류 발생:", error);
         if (error instanceof Error) {
+            if (error.message.includes("API Key")) throw error;
             if (error.message.includes("API가 이미지를 반환하지 않았습니다")) {
                 throw error;
             }
@@ -154,6 +217,7 @@ You must follow the user's request precisely. The user's request is: "${translat
 
 export const restoreImage = async (imageFile: File, prompt: string): Promise<string> => {
     try {
+        const ai = getAI();
         const imageData = await fileToBase64(imageFile);
         const translatedPrompt = await translateToEnglish(prompt);
         
@@ -193,6 +257,7 @@ You are an expert photo restoration AI. Your task is to restore the provided ima
 
     } catch (error) {
         console.error("이미지 복원 중 오류 발생:", error);
+        if (error instanceof Error && error.message.includes("API Key")) throw error;
         throw new Error("이미지 복원에 실패했습니다. 입력 이미지나 프롬프트를 확인하시거나 잠시 후 다시 시도해주세요.");
     }
 };

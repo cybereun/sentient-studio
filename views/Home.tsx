@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AppView } from '../types';
 
@@ -5,39 +6,63 @@ interface HomeProps {
   setView: (view: AppView) => void;
 }
 
-const FeatureCard: React.FC<{ title: string; description: string; onClick: () => void; icon: React.ReactNode }> = ({ title, description, onClick, icon }) => (
+const FeatureCard: React.FC<{ 
+    title: string; 
+    description: string; 
+    onClick: () => void; 
+    imageSrc: string;
+    buttonText: string;
+}> = ({ title, description, onClick, imageSrc, buttonText }) => (
     <div 
         onClick={onClick}
-        className="group bg-white p-8 rounded-xl shadow-lg border border-stone-200 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 transform"
+        className="group relative overflow-hidden rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer h-96 flex flex-col justify-end"
     >
-        <div className="flex items-center justify-center h-16 w-16 mb-6 rounded-full bg-rose-100 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300">
-            {icon}
+        <div className="absolute inset-0 bg-stone-200 transition-transform duration-700 group-hover:scale-105">
+            {/* Placeholder for feature image pattern */}
+            <div className={`w-full h-full bg-cover bg-center opacity-60 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-40`} style={{backgroundImage: `url(${imageSrc})`}}></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/40 to-transparent"></div>
         </div>
-        <h3 className="text-2xl font-bold text-stone-800 mb-2">{title}</h3>
-        <p className="text-stone-600">{description}</p>
+        
+        <div className="relative p-8 z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+            <h3 className="text-3xl font-bold text-white mb-3 font-serif">{title}</h3>
+            <p className="text-stone-300 mb-6 font-light leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">{description}</p>
+            <div className="flex items-center text-white font-medium tracking-wide">
+                <span className="border-b border-white pb-1">{buttonText}</span>
+                <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </div>
+        </div>
     </div>
 );
 
 
 const Home: React.FC<HomeProps> = ({ setView }) => {
   return (
-    <div className="text-center py-16">
-      <h1 className="text-5xl md:text-6xl font-extrabold text-stone-800 mb-4">되찾고, 창조하세요</h1>
-      <p className="max-w-3xl mx-auto text-lg text-stone-600 mb-12">
-        상상에 생명을 불어넣는 감성 AI 포토 스튜디오. 이미지를 새로운 현실로 완벽하게 합성하거나, 소중한 추억에 생생한 색을 불어넣으세요.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+    <div className="flex flex-col items-center justify-center min-h-[80vh]">
+      <div className="text-center max-w-4xl mx-auto mb-20 animate-fade-in-up">
+        <span className="inline-block py-1 px-3 rounded-full bg-rose-50 text-rose-500 text-xs font-bold tracking-widest uppercase mb-6 border border-rose-100">Next Generation AI Studio</span>
+        <h1 className="text-6xl md:text-8xl font-black text-stone-900 mb-8 font-serif leading-tight tracking-tight">
+          Redefine <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-800 to-stone-500">Reality.</span>
+        </h1>
+        <p className="text-xl md:text-2xl text-stone-500 font-light leading-relaxed max-w-2xl mx-auto">
+          당신의 상상을 현실로 만드는 가장 우아한 방법. <br className="hidden md:block"/>
+          감성적인 AI 기술로 이미지를 합성하고, 추억을 복원하세요.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
         <FeatureCard 
-            title="이미지 합성"
-            description="기본 사진과 다른 사물 사진을 결합하여 상상 속의 새롭고 완벽한 장면을 만들어보세요."
+            title="Scene Composition"
+            description="서로 다른 사물과 배경을 완벽하게 조화시켜 새로운 이야기를 만들어냅니다. 조명과 그림자까지 계산된 완벽한 합성을 경험하세요."
             onClick={() => setView(AppView.COMPOSE)}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+            imageSrc="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop"
+            buttonText="합성 시작하기"
         />
         <FeatureCard 
-            title="사진 복원"
-            description="오래되거나 빛바랜 사진을 되살려 선명도를 높이고 자연스러운 색상을 입혀보세요."
+            title="Memory Restoration"
+            description="시간이 흘러 희미해진 소중한 순간들을 되살립니다. 손상을 복구하고, 생생한 컬러를 입혀 그때의 감동을 다시 느껴보세요."
             onClick={() => setView(AppView.RESTORE)}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            imageSrc="https://images.unsplash.com/photo-1531303435785-3853fb435c40?q=80&w=2070&auto=format&fit=crop"
+            buttonText="복원 시작하기"
         />
       </div>
     </div>

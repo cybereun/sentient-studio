@@ -34,7 +34,6 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
     if (e.target.files && e.target.files.length > 0) {
       processFiles(e.target.files);
     }
-    // Reset input value to allow selecting the same file again if needed
     e.target.value = '';
   };
 
@@ -72,18 +71,19 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
         {images.map((img, index) => (
-          <div key={`${img.previewUrl}-${index}`} className="relative group aspect-square">
+          <div key={`${img.previewUrl}-${index}`} className="relative group aspect-square rounded-xl overflow-hidden shadow-sm border border-stone-100 bg-white">
             <img 
               src={img.previewUrl} 
               alt={`Uploaded ${index}`} 
-              className="w-full h-full object-cover rounded-lg shadow-sm border border-stone-200" 
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
             <button
               onClick={() => handleRemove(index)}
-              className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-sm font-bold shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-rose-600 focus:opacity-100"
-              aria-label="이미지 삭제"
+              className="absolute top-1 right-1 bg-white text-stone-800 rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold shadow-md opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-rose-500 hover:text-white transform scale-90 group-hover:scale-100"
+              aria-label="Remove"
             >
               &times;
             </button>
@@ -91,10 +91,10 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
         ))}
 
         <label 
-          className={`relative flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all duration-300
+          className={`relative flex flex-col items-center justify-center aspect-square rounded-xl cursor-pointer transition-all duration-300
             ${isDragging 
-              ? 'border-rose-500 bg-rose-50 scale-105' 
-              : 'border-stone-300 bg-white hover:bg-stone-50 hover:border-rose-400'
+              ? 'ring-2 ring-rose-500 bg-rose-50' 
+              : 'border border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm'
             }`}
           onDragEnter={onDragEnter}
           onDragLeave={onDragLeave}
@@ -102,10 +102,10 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
           onDrop={onDrop}
         >
           <div className="flex flex-col items-center justify-center p-2 text-center overflow-hidden">
-            <svg className={`w-8 h-8 mb-2 ${isDragging ? 'text-rose-500' : 'text-stone-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-6 h-6 mb-1 ${isDragging ? 'text-rose-500' : 'text-stone-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-xs font-medium text-stone-600 break-words w-full px-1">{title}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-stone-500">{title}</span>
           </div>
           <input 
             type="file" 

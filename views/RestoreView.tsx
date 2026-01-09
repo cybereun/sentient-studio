@@ -73,48 +73,57 @@ const RestoreView: React.FC<RestoreViewProps> = ({ addToHistory }) => {
     };
     
     return (
-        <div className="w-full space-y-8">
-            <div className="text-center mb-10">
-                <h2 className="text-4xl font-bold text-stone-800">사진 복원 및 컬러화</h2>
-                <p className="mt-2 text-lg text-stone-600 max-w-2xl mx-auto">오래된 추억에 새로운 숨결을 불어넣으세요. 빛바랜 사진을 업로드하면 AI가 예전의 영광을 되찾아 드립니다.</p>
-            </div>
+        <div className="w-full">
+            <header className="mb-12">
+                <h2 className="text-4xl md:text-5xl font-black text-stone-900 font-serif mb-4">Restore</h2>
+                <p className="text-stone-500 text-lg font-light max-w-xl">오래된 사진에 새로운 생명과 색채를 불어넣으세요.</p>
+            </header>
 
-            <div className="flex flex-col lg:flex-row gap-8 items-start">
+            <div className="flex flex-col xl:flex-row gap-8 items-start">
                 {/* Left Column: Inputs */}
-                <div className="w-full lg:w-5/12 space-y-6">
-                    <div className="bg-white p-6 rounded-lg shadow-lg border border-stone-200 space-y-6">
-                        <ImageUploader id="restore-image" title="오래된 사진 업로드" description="빛바래거나, 흑백이거나, 약간 손상된 사진에 가장 효과적입니다" onImageSelect={setImage} />
+                <div className="w-full xl:w-5/12 space-y-8">
+                    <div className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 space-y-8">
+                        <section>
+                            <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest mb-4">Original Photo</h3>
+                            <ImageUploader id="restore-image" title="사진 업로드" description="복원할 이미지를 선택하세요" onImageSelect={setImage} />
+                        </section>
                         
                         {/* Restoration Options */}
-                        <div className="space-y-5 bg-stone-50 p-5 rounded-lg border border-stone-100">
-                            <h3 className="text-sm font-bold text-stone-700 uppercase tracking-wide border-b border-stone-200 pb-2 mb-3">작업 옵션</h3>
+                        <section className="space-y-6">
+                            <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest pb-2 border-b border-stone-100">Enhancement Options</h3>
                             
-                            <div className="space-y-3">
-                                <label className="flex items-center p-2 rounded hover:bg-white transition-colors cursor-pointer">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={options.restore} 
-                                        onChange={(e) => setOptions(prev => ({...prev, restore: e.target.checked}))} 
-                                        className="h-5 w-5 text-rose-500 border-stone-300 rounded focus:ring-rose-500 transition duration-150 ease-in-out" 
-                                    />
-                                    <span className="ml-3 block text-stone-700 font-medium">손상 복원 (스크래치, 먼지 제거)</span>
+                            <div className="space-y-4">
+                                <label className="flex items-center group cursor-pointer">
+                                    <div className="relative flex-shrink-0">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={options.restore} 
+                                            onChange={(e) => setOptions(prev => ({...prev, restore: e.target.checked}))} 
+                                            className="peer sr-only" 
+                                        />
+                                        <div className="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                                    </div>
+                                    <span className="ml-3 text-stone-700 font-medium group-hover:text-stone-900">손상 복원 (Repair)</span>
                                 </label>
-                                <label className="flex items-center p-2 rounded hover:bg-white transition-colors cursor-pointer">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={options.colorize} 
-                                        onChange={(e) => setOptions(prev => ({...prev, colorize: e.target.checked}))} 
-                                        className="h-5 w-5 text-rose-500 border-stone-300 rounded focus:ring-rose-500 transition duration-150 ease-in-out" 
-                                    />
-                                    <span className="ml-3 block text-stone-700 font-medium">자동 컬러화 (흑백 → 컬러)</span>
+                                <label className="flex items-center group cursor-pointer">
+                                    <div className="relative flex-shrink-0">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={options.colorize} 
+                                            onChange={(e) => setOptions(prev => ({...prev, colorize: e.target.checked}))} 
+                                            className="peer sr-only" 
+                                        />
+                                        <div className="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                                    </div>
+                                    <span className="ml-3 text-stone-700 font-medium group-hover:text-stone-900">컬러화 (Colorize)</span>
                                 </label>
                             </div>
 
-                            <div className="pt-2 border-t border-stone-200 mt-2">
-                                <span className="block text-sm font-semibold text-stone-700 mb-3">해상도 업스케일링</span>
-                                <div className="flex space-x-2">
+                            <div className="pt-2">
+                                <span className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">Upscale Resolution</span>
+                                <div className="flex p-1 bg-stone-50 rounded-xl border border-stone-100">
                                     {(['none', '2x', '4x'] as UpscaleOption[]).map(value => (
-                                        <label key={value} className={`flex-1 text-center py-2 text-sm rounded-md cursor-pointer border transition-all ${options.upscale === value ? 'bg-rose-100 border-rose-500 text-rose-700 font-bold' : 'bg-white border-stone-200 text-stone-600 hover:border-stone-400'}`}>
+                                        <label key={value} className={`flex-1 text-center py-2 text-sm rounded-lg cursor-pointer transition-all ${options.upscale === value ? 'bg-white text-stone-900 shadow-sm font-bold' : 'text-stone-500 hover:text-stone-700'}`}>
                                             <input 
                                                 type="radio" 
                                                 name="upscale-option" 
@@ -123,65 +132,65 @@ const RestoreView: React.FC<RestoreViewProps> = ({ addToHistory }) => {
                                                 onChange={() => setOptions(prev => ({ ...prev, upscale: value }))} 
                                                 className="sr-only" 
                                             />
-                                            {value === 'none' ? '원본 크기' : value}
+                                            {value === 'none' ? '1x' : value}
                                         </label>
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        </section>
 
-                        <div>
-                            <div className="flex justify-between items-center mb-1">
-                                <label htmlFor="prompt-restore" className="block text-sm font-medium text-stone-700">AI 지시사항 (프롬프트)</label>
-                                 <button
+                        <section>
+                             <div className="flex justify-between items-end mb-4">
+                                <h3 className="text-sm font-bold text-stone-900 uppercase tracking-widest">Detail Prompt</h3>
+                                <button
                                     onClick={() => setPrompt(generateOptimizedPrompt())}
-                                    className="px-3 py-1 text-xs bg-stone-600 text-white font-semibold rounded hover:bg-stone-700 transition-colors"
+                                    className="text-xs font-semibold text-stone-400 hover:text-stone-600 transition-colors"
                                 >
-                                    옵션대로 문구 자동생성
+                                    Reset to Default
                                 </button>
                             </div>
                             <textarea
                                 id="prompt-restore"
                                 rows={3}
-                                className="w-full p-3 border border-stone-300 bg-white text-stone-800 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all placeholder:text-stone-400 text-sm resize-none"
+                                className="w-full p-4 bg-stone-50 border-0 rounded-xl text-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-rose-500/20 focus:bg-white transition-all text-sm leading-relaxed resize-none"
                                 value={prompt}
                                 onChange={(e) => setPrompt(e.target.value)}
                             />
-                        </div>
+                        </section>
                         
-                        <div className="pt-2">
+                        <div className="pt-4">
                              <button
                                 onClick={handleSubmit}
                                 disabled={isLoading || !image}
-                                className="w-full py-4 bg-rose-500 text-white font-bold text-lg rounded-xl shadow-md hover:bg-rose-600 disabled:bg-stone-300 disabled:cursor-not-allowed transition-all duration-300 transform active:scale-95"
+                                className="w-full py-5 bg-stone-900 text-white font-medium text-lg rounded-2xl shadow-lg hover:shadow-xl hover:bg-black disabled:bg-stone-200 disabled:text-stone-400 disabled:shadow-none transition-all duration-300 transform active:scale-[0.99]"
                             >
-                                {isLoading ? '복원 중...' : '내 사진 복원하기'}
+                                {isLoading ? 'Restoring...' : 'Start Restoration'}
                             </button>
                         </div>
                     </div>
-                    {error && <div className="text-red-600 bg-red-100 p-4 rounded-md text-center text-sm font-medium animate-pulse">{error}</div>}
+                    {error && <div className="text-rose-600 bg-rose-50 p-4 rounded-xl text-center text-sm font-medium border border-rose-100 animate-pulse">{error}</div>}
                 </div>
 
                 {/* Right Column: Result */}
-                <div className="w-full lg:w-7/12 flex flex-col">
+                <div className="w-full xl:w-7/12 flex flex-col min-h-[600px]">
                     {isLoading ? (
-                        <div className="w-full h-[600px] flex items-center justify-center bg-white rounded-2xl border border-stone-200 shadow-sm">
+                        <div className="flex-1 flex items-center justify-center bg-white rounded-3xl border border-stone-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                             <LoadingIndicator />
                         </div>
                     ) : result ? (
-                        <div className="w-full">
-                            <h3 className="text-2xl font-bold text-stone-800 mb-6 pl-2 border-l-4 border-rose-500">복원된 추억</h3>
+                        <div className="w-full animate-fade-in">
+                             <h3 className="text-sm font-bold text-stone-400 uppercase tracking-widest mb-4 text-right">Restored Memory</h3>
                             <ResultDisplay imageUrl={result} prompt={prompt} />
                         </div>
                     ) : (
-                        <div className="w-full h-[600px] flex flex-col items-center justify-center bg-stone-100 rounded-2xl border-2 border-dashed border-stone-300 text-stone-400 p-8 text-center">
-                            <div className="w-20 h-20 mb-4 rounded-full bg-stone-200 flex items-center justify-center text-stone-400">
+                        <div className="flex-1 flex flex-col items-center justify-center bg-stone-100/50 rounded-3xl border-2 border-dashed border-stone-200 text-stone-400 p-12 text-center group hover:border-stone-300 transition-colors">
+                            <div className="w-24 h-24 mb-6 rounded-full bg-white shadow-sm flex items-center justify-center text-stone-300 group-hover:text-rose-400 group-hover:scale-110 transition-all duration-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-medium text-stone-500 mb-2">복원할 준비가 되었습니다</h3>
-                            <p className="max-w-md">왼쪽 패널에서 사진을 업로드하고 옵션을 선택한 후 <br/>'내 사진 복원하기' 버튼을 눌러주세요.</p>
+                            <h3 className="text-2xl font-serif text-stone-600 mb-2">Awaiting Photo</h3>
+                            <p className="font-light">Upload a photo to begin restoration.</p>
                         </div>
                     )}
                 </div>
